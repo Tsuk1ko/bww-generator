@@ -2,7 +2,7 @@
   <div id="app">
     <div class="mdui-appbar">
       <div class="mdui-toolbar mdui-color-grey-900">
-        <span v-if="grayscale" class="mdui-typo-title">黑白生草器</span>
+        <span v-if="grayscale" class="mdui-typo-title">黑白生草图制作器</span>
         <span v-else class="mdui-typo-title">
           <del>黑白</del>生草图制作器
         </span>
