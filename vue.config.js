@@ -23,7 +23,7 @@ module.exports = {
         },
       ],
     },
-    name: '黑白图生成器',
+    name: '黑白生草图制作器',
     themeColor: '#212121',
     backgroundColor: '#212121',
     msTileColor: '#212121',
