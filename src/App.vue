@@ -55,7 +55,7 @@
         <mdui-input v-model="space" :disabled="autoWidth">文字行距 (px)</mdui-input>
         <mdui-checkbox v-model="autoWidth">自动调整</mdui-checkbox>
       </div>
-      <mdui-textfield class="mdui-p-t-0 mdui-textfield-floating-label" v-model="fontFamily">自定义字体</mdui-textfield>
+      <mdui-textfield class="mdui-p-t-0 mdui-textfield-floating-label" v-model="fontFamily">自定义字体 (font-family)</mdui-textfield>
       <div class="sentence-input-group mdui-m-b-1">
         <div class="sentence-input" v-for="(sentence, index) in sentences" :key="index">
           <mdui-textfield
@@ -65,6 +65,7 @@
           >行 {{index + 1}}</mdui-textfield>
           <mdui-textfield
             class="size-input"
+            type="number"
             v-model="sentences[index].size"
             :disabled="sentence.auto"
           >大小 (px)</mdui-textfield>
@@ -116,14 +117,11 @@
           @click="adaptiveWidth = !adaptiveWidth"
         >
           <img :src="image.src" :style="{ filter: grayscale ? 'grayscale(1)' : 'unset' }" />
-          <div
-            class="sentences mdui-text-center"
-            :style="{ padding: `0 ${padding}px ${padding}px ${padding}px`, fontFamily }"
-          >
+          <div class="sentences mdui-text-center" :style="{ padding: `${padding}px`, fontFamily }">
             <p
               v-for="(sentence, index) in sentences"
               :key="index"
-              :style="{ marginTop: `${space}px`, fontSize: `${sentence.size}px` }"
+              :style="{ marginTop: `${index == 0 ? 0 : space}px`, fontSize: `${sentence.size}px` }"
             >{{sentence.text}}</p>
           </div>
         </div>
@@ -167,6 +165,15 @@ export default {
     deferredPrompt: null,
   }),
   watch: {
+    width() {
+      this.updateAllFontSize();
+    },
+    padding() {
+      this.updateAllFontSize();
+    },
+    space() {
+      this.updateAllFontSize();
+    },
     file(file) {
       if (!file) return;
       this.setImage(window.URL.createObjectURL(file));
@@ -213,6 +220,9 @@ export default {
     autoFontSize(str) {
       const w = this.width - 2 * this.padding;
       return Math.floor(Math.max(Math.min((1.9 * w) / this.textLen(str), w * 0.068), w * 0.045));
+    },
+    updateAllFontSize() {
+      this.sentences.filter(s => s.auto).forEach(s => (s.size = this.autoFontSize(s.text)));
     },
     async generate() {
       this.generating = true;
