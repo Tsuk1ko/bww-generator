@@ -1,0 +1,33 @@
+name: Deploy to Pages
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'public/**'
+jobs:
+  build-and-deploy:
+    env:
+      ENABLE_AUTO_DEPLOY: ${{ !!secrets.ACCESS_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        if: env.ENABLE_AUTO_DEPLOY == 'true'
+        uses: actions/checkout@v1
+      - name: Cache node_modules
+        if: env.ENABLE_AUTO_DEPLOY == 'true'
+        uses: actions/cache@v1.0.1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-modules-${{ github.sha }}
+          restore-keys: ${{ runner.OS }}-modules-
+      - name: Build and Deploy to GitHub Pages
+        if: env.ENABLE_AUTO_DEPLOY == 'true'
+        uses: JamesIves/github-pages-deploy-action@releases/v2
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: dist
+          CNAME: ${{ secrets.CNAME }}
+          BUILD_SCRIPT: npm install && npm run build
