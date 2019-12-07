@@ -53,9 +53,12 @@
         <mdui-input :value="ratio" :disabled="true" type="text">缩放比例</mdui-input>
         <mdui-input v-model="padding" :disabled="autoWidth">文字边距 (px)</mdui-input>
         <mdui-input v-model="space" :disabled="autoWidth">文字行距 (px)</mdui-input>
-        <mdui-checkbox v-model="autoWidth">自动调整</mdui-checkbox>
+        <mdui-checkbox v-model="autoWidth" style="margin-top:8px">自动调整</mdui-checkbox>
       </div>
-      <mdui-textfield class="mdui-p-t-0 mdui-textfield-floating-label" v-model="fontFamily">自定义字体 (font-family)</mdui-textfield>
+      <mdui-textfield
+        class="mdui-p-t-0 mdui-textfield-floating-label"
+        v-model="fontFamily"
+      >自定义字体 (font-family)</mdui-textfield>
       <div class="sentence-input-group mdui-m-b-1">
         <div class="sentence-input" v-for="(sentence, index) in sentences" :key="index">
           <mdui-textfield
@@ -97,7 +100,7 @@
         <mdui-checkbox v-model="grayscale">黑白</mdui-checkbox>
       </div>
     </div>
-    <div class="mdui-container mdui-m-b-4">
+    <div class="mdui-container mdui-m-b-2">
       <label class="mdui-textfield-label">
         效果预览 点击切换
         <span v-html="previewModeText"></span>
@@ -297,9 +300,6 @@ body::-webkit-scrollbar-thumb {
   margin-right: 16px;
   margin-bottom: 16px;
 }
-/* .item-group .mdui-checkbox {
-  margin-top: 8px;
-} */
 #preview-wrap {
   transform-origin: left top;
 }
