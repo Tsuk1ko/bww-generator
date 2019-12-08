@@ -24,7 +24,7 @@
         </a>
       </div>
     </div>
-    <gallery :images="gallery.images" :index="gallery.index" @close="gallery.index = null"></gallery>
+    <gallery :images="gallery.images" :index="gallery.index" @close="gallery.index = null" />
     <div class="mdui-container mdui-m-t-4" style="overflow:hidden">
       <div class="item-group">
         <label
@@ -129,7 +129,6 @@
           </div>
         </div>
       </div>
-      <img v-if="output" :src="output" />
     </div>
   </div>
 </template>
@@ -158,7 +157,6 @@ export default {
     grayscale: true,
     autoWidth: true,
     generating: false,
-    output: null,
     gallery: {
       images: [],
       index: null,
@@ -166,15 +164,10 @@ export default {
     wrapWidth: 0,
     adaptiveWidth: true,
     deferredPrompt: null,
+    generateCacheKey: '',
   }),
   watch: {
-    width() {
-      this.updateAllFontSize();
-    },
-    padding() {
-      this.updateAllFontSize();
-    },
-    space() {
+    updateFontSizeWatch() {
       this.updateAllFontSize();
     },
     file(file) {
@@ -200,6 +193,12 @@ export default {
     },
     previewModeText() {
       return this.adaptiveWidth ? '[<b class="mdui-text-color-black">适应宽度</b>/100%]' : '[适应宽度/<b class="mdui-text-color-black">100%</b>]';
+    },
+    updateFontSizeWatch() {
+      return [this.width, this.padding, this.space].join();
+    },
+    generateCacheWatch() {
+      return [this.updateFontSizeWatch, this.grayscale, JSON.stringify(this.sentences)].join();
     },
   },
   methods: {
@@ -228,7 +227,12 @@ export default {
       this.sentences.filter(s => s.auto).forEach(s => (s.size = this.autoFontSize(s.text)));
     },
     async generate() {
+      if (this.generateCacheKey === this.generateCacheWatch) {
+        this.gallery.index = 0;
+        return;
+      }
       this.generating = true;
+      this.generateCacheKey = this.generateCacheWatch;
       let output = await dom2png(this.$refs.preview);
       for (const check = await dom2png(this.$refs.preview); check !== output; output = check);
       this.gallery.images = [
