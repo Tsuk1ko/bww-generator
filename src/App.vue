@@ -111,7 +111,7 @@
         id="preview-wrap"
         ref="previewWrap"
         :class="{ 'mdui-table-fluid mdui-shadow-0': !adaptiveWidth }"
-        :style="{ transform: previewScale, border: 'none' }"
+        :style="{ transform: previewScaleStr, border: 'none' }"
       >
         <div
           id="preview"
@@ -120,7 +120,10 @@
           @click="adaptiveWidth = !adaptiveWidth"
         >
           <img :src="image.src" :style="{ filter: grayscale ? 'grayscale(1)' : 'unset' }" />
-          <div class="sentences mdui-text-center" :style="{ padding: `${padding}px`, fontFamily }">
+          <div
+            class="sentences mdui-text-center"
+            :style="{ padding: `${padding}px`, fontFamily: fontFamilyStr }"
+          >
             <p
               v-for="(sentence, index) in sentences"
               :key="index"
@@ -149,6 +152,7 @@ export default {
   data: () => ({
     file: null,
     image: null,
+    imageTimestamp: 0,
     fontFamily: window.localStorage.getItem('bw-font-family') || '',
     width: 0,
     sentences: [],
@@ -180,6 +184,9 @@ export default {
     fontFamily(val) {
       window.localStorage.setItem('bw-font-family', val);
     },
+    image() {
+      this.imageTimestamp = Date.now();
+    },
   },
   computed: {
     ratio() {
@@ -189,7 +196,10 @@ export default {
       return Math.round((this.width / this.image.width) * this.image.height);
     },
     previewScale() {
-      return this.adaptiveWidth ? `scale(${Math.min(this.wrapWidth / this.width, 1)})` : 'unset';
+      return Math.min(this.wrapWidth / this.width, 1);
+    },
+    previewScaleStr() {
+      return this.adaptiveWidth ? `scale(${this.previewScale})` : '';
     },
     previewModeText() {
       return this.adaptiveWidth ? '[<b class="mdui-text-color-black">适应宽度</b>/100%]' : '[适应宽度/<b class="mdui-text-color-black">100%</b>]';
@@ -198,7 +208,12 @@ export default {
       return [this.width, this.padding, this.space].join();
     },
     generateCacheWatch() {
-      return [this.updateFontSizeWatch, this.grayscale, JSON.stringify(this.sentences)].join();
+      return [this.imageTimestamp, this.updateFontSizeWatch, this.grayscale, JSON.stringify(this.sentences)].join();
+    },
+    fontFamilyStr() {
+      let f = this.fontFamily.trim();
+      if (f && !/,/.test(f)) f = `"${f}"`;
+      return f;
     },
   },
   methods: {
