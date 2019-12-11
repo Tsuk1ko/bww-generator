@@ -17,7 +17,7 @@ module.exports = {
           handler: 'CacheFirst',
           options: {
             cacheableResponse: {
-              statuses: [0, 200],
+              statuses: [200],
             },
           },
         },
