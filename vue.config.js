@@ -43,13 +43,13 @@ module.exports = {
       description: '快速制作，一键生草',
       icons: [
         {
-          src: './assets/icons/default-icon-192x192-maskable.png',
+          src: 'img/icons/default-icon-192x192-maskable.png',
           sizes: '192x192',
           type: 'image/png',
           purpose: 'maskable',
         },
         {
-          src: './assets/icons/default-icon-512x512-maskable.png',
+          src: 'img/icons/default-icon-512x512-maskable.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'maskable',
